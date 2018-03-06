@@ -1,0 +1,33 @@
+{
+  "name": "from-source-to-production-with-ease",
+  "version": "1.0.0",
+  "description": "From source to production with ease -- a talk held by Asbjørn Ulsberg at DevOps Pro Vilnius 2018.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "reveal.js": "^3.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:asbjornu/from-source-to-production-with-ease.git"
+  },
+  "keywords": [
+    "devops",
+    "ci",
+    "cd",
+    "versioning",
+    "presentation"
+  ],
+  "author": "Asbjørn Ulsberg <asbjorn@ulsberg.no>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asbjornu/from-source-to-production-with-ease/issues"
+  },
+  "homepage": "https://github.com/asbjornu/from-source-to-production-with-ease#readme"
+}
