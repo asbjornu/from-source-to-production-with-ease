@@ -11,3 +11,9 @@ Reveal.initialize({
         }
     ]
 });
+
+var presentation = new Presentation();
+
+Reveal.addEventListener('slidechanged', presentation.slideChanged);
+Reveal.addEventListener('fragmentshown', presentation.fragmentShown);
+Reveal.addEventListener('fragmenthidden', presentation.fragmentHidden);
