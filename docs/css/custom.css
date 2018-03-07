@@ -38,7 +38,9 @@
 }
 
 #pipeline-drawing .monitor {
+    transition: opacity 1s;
     fill: #AA2E2E;
+    opacity: 1;
 }
 
 #pipeline-drawing .monitor-dim {
@@ -48,7 +50,9 @@
 }
 
 #pipeline-drawing .text {
+    transition: opacity 1s;
     fill: #fff;
+    opacity: 1;
 }
 
 #pipeline-drawing .text-dim {
