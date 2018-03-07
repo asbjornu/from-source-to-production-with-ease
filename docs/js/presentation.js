@@ -33,7 +33,17 @@ function Presentation() {
         }
 
         if (nav.forward) {
-            
+            var monitors = document.getElementsByClassName('monitor');
+            if (monitors && monitors.length > 0) {
+                var monitor = monitors[0];
+                monitor.className.baseVal = 'monitor-dim';
+            }
+
+            var monitorTexts = document.getElementsByClassName('monitor-text');
+            if (monitorTexts && monitorTexts.length > 0) {
+                var monitorText = monitorTexts[0];
+                monitorText.className.baseVal = 'text-dim';
+            }
         }
     };
 
