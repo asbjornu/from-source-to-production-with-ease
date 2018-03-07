@@ -8,3 +8,43 @@
     box-shadow: none;
     margin: 0;
 }
+
+#pipeline-drawing .plan {
+    fill: #19838E;
+}
+
+#pipeline-drawing .verify {
+    fill: #3737AA;
+}
+
+#pipeline-drawing .create {
+    fill: #8B9B29;
+}
+
+#pipeline-drawing .st4 {
+    fill: none;
+}
+
+#pipeline-drawing .package {
+    fill: #3FA9F5;
+}
+
+#pipeline-drawing .release {
+    fill: #F15A24;
+}
+
+#pipeline-drawing .configure {
+    fill: #9263AB;
+}
+
+#pipeline-drawing .monitor {
+    fill: #AA2E2E;
+}
+
+#pipeline-drawing .monitor-dim {
+    fill: #AA2E2E;
+}
+
+#pipeline-drawing .text {
+    fill: #fff;
+}
