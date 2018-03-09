@@ -10,35 +10,32 @@ This talk attempts to answer all of these questions by providing real-world
 experience with tools and techniques that solve each piece of the puzzle,
 using Cake, GitVersion, TeamCity and Octopus Deploy.
 
-## How I set stuff up
+## Setup
 
-This requires a Windows installation to perform. Any Windows with PowerShell
-should do. The next part is taken from [this video](https://youtu.be/I0yCfiVh6aw).
+### Requirements
 
-First, mount the Windows Server 2016 ISO. For this tutorial, it's mounted at
-`D:\`. Copy the folder `NanoServer` from the mounted ISO to somewhere on
-your hard disk. Let's use `C:\Nano`. Then type the following commands in a
-PowerShell:
+- [TeamCity](https://www.jetbrains.com/teamcity/) (will be installed and
+  booted through Docker)
+- [GitVersion](https://github.com/GitTools/GitVersion)
+- [pjson](https://github.com/igorgue/pjson) (requires Python)
+- [Octopus Deploy](https://octopus.com/) running somewhere.
+- [Docker](https://www.docker.com/)
 
-```powershell
-Import-Module C:\Nano\NanoServerImageGenerator\NanoServerImageGenerator.psm1
-New-NanoServerImage -Edition Standard -MediaPath D:\ -BasePath C:\Nano -TargetPath C:\Nano\windows-nano-server-01.vhd -DeploymentType Guest -ComputerName NANOSERVER -Storage -Package Microsoft-NanoServer-Guest-Package
-```
-Next you can fill the created disk image with packages by following
-[this tutorial](https://www.petri.com/how-to-install-windows-server-2016-nano-in-a-vm).
+### Do The Dance
 
-Finally, if you want to use the VHD in Parallels, you need to
-[create a `.vmc` file alongside it](https://stackoverflow.com/a/5176279/61818).
+To get the presentation and TeamCity up and running, the folders
+`~/Library/TeamCity/Logs` and `~/Library/TeamCity/Data` need to exist. When
+they do, `docker-compose up` in the root of this repository should bring the
+two websites up and running on `http://localhost` and `http://localhost:8080`
+respectively.
 
-### Derailment
+Octopus Deploy was so difficult to get running on Docker that I gave that up
+and just installed it in a Windows Server Core 2016 VM in Parallels instead.
 
-Now, if you did like me and typed `.vhdx` instead of `.vhd` in the
-`New-NanoServerImage` command, you might need to convert the `.vhdx` file
-to a `.vhd` file. Or you can just redo the process. I didn't know that
-was possible first, which derailed me to [this blog post explaining how
-to convert VHD to VHDX and back](http://itproctology.blogspot.no/2013/03/converting-vhdx-vhd-and-back-without.html). Interesting!
+Once GitVersion is installed and the presentation, TeamCity and Octopus Deploy
+is up and running, you should be able to perform the examples successfully.
 
-### Install SQL Server
-
-https://www.starwindsoftware.com/blog/install-sql-server-2016-on-windows-server-2016-server-core
- netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow protocol=TCP localport=80
+The examples use GitVersion and `pjson` (to colorize the JSON in the console)
+and has aliased `gv` to `gitversion | pjson`. To install `pjson`, you need
+Python. When Python is installed, `pip install pjson` will install it on your
+`PATH`.
