@@ -12,11 +12,33 @@ using Cake, GitVersion, TeamCity and Octopus Deploy.
 
 ## How I set stuff up
 
-This is currently just random notes scribbled down during setup and
-development. I hope to make these more coherent over time.
+This requires a Windows installation to perform. Any Windows with PowerShell
+should do. The next part is taken from [this video](https://youtu.be/I0yCfiVh6aw).
 
-1. `vagrant init StefanScherer/windows_2016_docker`
-2. `$Password = Read-Host "Enter a password" -AsSecureString; Set-LocalUser -Name Administrator -Password $Password`
-3. `netsh advfirewall firewall add rule name="yolo" dir=in action=allow protocol=TCP localport=2376`
-4. Followed [this guide](https://www.ntweekly.com/2017/02/06/part-2-run-windows-containers-on-windows-docker-host/)
-   to set up the docker daemon to agree to being a `DOCKER_HOST` for macOS.
+First, mount the Windows Server 2016 ISO. For this tutorial, it's mounted at
+`D:\`. Copy the folder `NanoServer` from the mounted ISO to somewhere on
+your hard disk. Let's use `C:\Nano`. Then type the following commands in a
+PowerShell:
+
+```powershell
+Import-Module C:\Nano\NanoServerImageGenerator\NanoServerImageGenerator.psm1
+New-NanoServerImage -Edition Standard -MediaPath D:\ -BasePath C:\Nano -TargetPath C:\Nano\windows-nano-server-01.vhd -DeploymentType Guest -ComputerName NANOSERVER -Storage -Package Microsoft-NanoServer-Guest-Package
+```
+Next you can fill the created disk image with packages by following
+[this tutorial](https://www.petri.com/how-to-install-windows-server-2016-nano-in-a-vm).
+
+Finally, if you want to use the VHD in Parallels, you need to
+[create a `.vmc` file alongside it](https://stackoverflow.com/a/5176279/61818).
+
+### Derailment
+
+Now, if you did like me and typed `.vhdx` instead of `.vhd` in the
+`New-NanoServerImage` command, you might need to convert the `.vhdx` file
+to a `.vhd` file. Or you can just redo the process. I didn't know that
+was possible first, which derailed me to [this blog post explaining how
+to convert VHD to VHDX and back](http://itproctology.blogspot.no/2013/03/converting-vhdx-vhd-and-back-without.html). Interesting!
+
+### Install SQL Server
+
+https://www.starwindsoftware.com/blog/install-sql-server-2016-on-windows-server-2016-server-core
+ netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow protocol=TCP localport=80
