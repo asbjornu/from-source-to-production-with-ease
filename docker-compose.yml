@@ -1,11 +1,5 @@
 version: '3'
-networks:
-  default:
-    external:
-      name: nat
-
 services:
-
   presentation:
     restart: always
     image: nginx:alpine
@@ -13,47 +7,9 @@ services:
     volumes:
       - ./docs:/usr/share/nginx/html
     ports:
-      - "8080:80"
-
-  # sqlserver:
-  #   container_name: "sqlserver"
-  #   image: "microsoft/mssql-server-linux:2017-latest"
-  #   ports:
-  #   - "1401:1433"
-  #   environment:
-  #   - MSSQL_SA_PASSWORD=45a52bd8378c41c79a2bb4d5aba5d785
-  #   - ACCEPT_EULA=Y
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.labels.os == linux
-
-  # teamcity:
-  #   container_name: "teamcity"
-  #   image: "jetbrains/teamcity-server"
-  #   depends_on:
-  #   - sqlserver
-  #   ports:
-  #   - "8080:8111"
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.labels.os == linux
-
-  # octopus:
-  #   container_name: "octopusdeploy"
-  #   image: "octopusdeploy/octopusdeploy"
-  #   depends_on:
-  #   - sqlserver
-  #   # host: "tcp://172.28.128.3:2375"
-  #   ports:
-  #   - "81:81"
-  #   tty: true
-  #   volumes:
-  #   - "~/Library/OctopusDeploy:c:/Octopus"
-  #   environment:
-  #   - sqlDbConnectionString="sqlserver"
-  #   deploy:
-  #     placement:
-  #       constraints:
-  #         - node.labels.os == windows
+      - "80:80"
+  teamcity:
+    container_name: "teamcity"
+    image: "jetbrains/teamcity-server"
+    ports:
+    - "8080:8111"
