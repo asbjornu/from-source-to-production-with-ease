@@ -11,5 +11,8 @@ services:
   teamcity:
     container_name: "teamcity"
     image: "jetbrains/teamcity-server"
+    volumes:
+      - ~/Library/TeamCity/Data:/data/teamcity_server/datatir
+      - ~/Library/TeamCity/Logs:/opt/teamcity/logs 
     ports:
     - "8080:8111"
