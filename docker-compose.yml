@@ -1,18 +1,33 @@
 version: '3'
+
 services:
+
   presentation:
-    restart: always
     image: nginx:alpine
     container_name: presentation-nginx
     volumes:
       - ./docs:/usr/share/nginx/html
     ports:
       - "80:80"
-  teamcity:
-    container_name: "teamcity"
+    restart: always
+
+  teamcity-server:
+    container_name: "teamcity-server"
     image: "jetbrains/teamcity-server"
     volumes:
-      - ~/Library/TeamCity/Data:/data/teamcity_server/datatir
-      - ~/Library/TeamCity/Logs:/opt/teamcity/logs 
+      - ~/Library/TeamCity/Data:/data/teamcity_server/datadir
+      - ~/Library/TeamCity/Logs:/opt/teamcity/logs
+      - ~/demo:/usr/demo
     ports:
     - "8080:8111"
+    restart: always
+
+  teamcity-agent:
+    container_name: "teamcity-agent"
+    image: "jetbrains/teamcity-agent"
+    environment:
+      - SERVER_URL=teamcity-server:8111
+    volumes:
+      - ~/Library/TeamCity/Agent:/data/teamcity_agent/conf
+      - ~/demo:/usr/demo
+    restart: always
