@@ -12,6 +12,11 @@ using Cake, GitVersion, TeamCity and Octopus Deploy.
 
 ## Setup
 
+This setup is currently written for macOS. This means all paths, etc. will
+be Unix style and pretty much nothing of this will work verbatim in Windows.
+If there's demand for writing a Windows version of this,
+[please submit an issue](https://github.com/asbjornu/from-source-to-production-with-ease/issues).
+
 ### Requirements
 
 - [TeamCity](https://www.jetbrains.com/teamcity/) (will be installed and
@@ -47,6 +52,8 @@ Python. When Python is installed, `pip install pjson` will install it on your
 
 #### Get Your Git Up
 
+First we're going to do some initial setup of Git and TeamCity.
+
 1.  Create the folders `~/demo/remote` and `~/demo/local`.
 2.  `cd ~/demo/remote` and type `git init --bare`.
 3.  `cd ~/demo/local` and type `git clone ~/demo/remote`.
@@ -65,4 +72,24 @@ Python. When Python is installed, `pip install pjson` will install it on your
     production)
 9.  Change the `readme.md` file in `~/demo/local`, commit it and push.
 10. See that the change is picked up by TeamCity, triggering a build.
-11. 
+11. Type `gv` at the command line and notice how the `BuildMetaData` is
+    incremented.
+
+#### Building a Cake
+
+Next we're going to add Cake and a build script to our repository.
+
+1. Visit [cakebuild.net](https://cakebuild.net/), then go to:
+    1. Get Started
+    2. Setting Up A New Project
+    3. Copy, paste and execute the OS X command to add a Cake build script to
+       the project:
+       `curl -Lsfo build.sh https://cakebuild.net/download/bootstrapper/osx`
+2. Make the build script executable: `chmod +x build.sh`
+3. Add the build script to Git: `git add build.sh`
+4. Commit: `git commit -m 'Added Cake build script'`
+5. Add a `build.cake` file containing the example from Cake's tutorial
+   chapter 2 ("Create a Cake Script").
+6. Execute the build script: `./build.sh`
+7. Notice how the "Hello World" message is printed on the command line.
+
