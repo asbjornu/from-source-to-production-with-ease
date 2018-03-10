@@ -47,11 +47,22 @@ Python. When Python is installed, `pip install pjson` will install it on your
 
 #### Get Your Git Up
 
-1. Create the folder `~/demo` and initialize a new Git repository init.
-2. Add and commit a `readme.md` file in the repository.
-3. Type `gv` in the repository to see that GitVersion has created version
-   `0.1.0` for your repository.
-4. Authorize the build agent in TeamCity by clicking "Agents" and
-   "Unauthorized"
-5. Create a new project from the repository `/usr/demo` in TeamCity.
-6. Make a commit in the repository.
+1.  Create the folders `~/demo/remote` and `~/demo/local`.
+2.  `cd ~/demo/remote` and type `git init --bare`.
+3.  `cd ~/demo/local` and type `git clone ~/demo/remote`.
+4.  Add and commit a `readme.md` file in the `local` repository.
+3.  Type `gv` in the repository to see that GitVersion has created version
+    `0.1.0` for your repository.
+5.  `git push` to the remote repository that we are going to set up in TeamCity.
+6.  Open the TeamCity web interface.
+7.  Authorize the build agent in TeamCity by clicking "Agents" and
+    "Unauthorized"
+8.  Create a new project from the repository `/usr/demo/remote` in TeamCity.
+9.  Edit the Version Control Settings for the attached VCS root and change
+    the "Changes Checking Interval" from 60 to 2 seconds (expand the
+    "advanced options" to reveal this setting).
+    (PS: This is done only for demo purposes. You want to keep this at 60s in
+    production)
+9.  Change the `readme.md` file in `~/demo/local`, commit it and push.
+10. See that the change is picked up by TeamCity, triggering a build.
+11. 
