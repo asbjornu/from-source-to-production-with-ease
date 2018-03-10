@@ -32,10 +32,26 @@ respectively.
 Octopus Deploy was so difficult to get running on Docker that I gave that up
 and just installed it in a Windows Server Core 2016 VM in Parallels instead.
 
+Visit `http://localhost:8080` and complete the TeamCity setup. Do the same for
+Octopus Deploy wherever you installed that.
+
 Once GitVersion is installed and the presentation, TeamCity and Octopus Deploy
 is up and running, you should be able to perform the examples successfully.
 
-The examples use GitVersion and `pjson` (to colorize the JSON in the console)
+The exercises use GitVersion and `pjson` (to colorize the JSON in the console)
 and has aliased `gv` to `gitversion | pjson`. To install `pjson`, you need
 Python. When Python is installed, `pip install pjson` will install it on your
 `PATH`.
+
+### Exercises
+
+#### Get Your Git Up
+
+1. Create the folder `~/demo` and initialize a new Git repository init.
+2. Add and commit a `readme.md` file in the repository.
+3. Type `gv` in the repository to see that GitVersion has created version
+   `0.1.0` for your repository.
+4. Authorize the build agent in TeamCity by clicking "Agents" and
+   "Unauthorized"
+5. Create a new project from the repository `/usr/demo` in TeamCity.
+6. Make a commit in the repository.
