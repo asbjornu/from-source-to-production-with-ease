@@ -72,7 +72,8 @@ First we're going to do some initial setup of Git and TeamCity.
     production)
 9.  Change the `readme.md` file in `~/demo/local`, commit it and push.
 10. See that the change is picked up by TeamCity, triggering a build.
-11. Type `gv` at the command line and notice how the `BuildMetaData` is
+11. Notice that TeamCity uses an integer build counter to number its builds.
+12. Type `gv` at the command line and notice how the `BuildMetaData` is
     incremented.
 
 ### Baking a Cake
@@ -104,21 +105,23 @@ Now, let's add GitVersion to the repository.
 
 1. Add `#tool "nuget:?package=GitVersion.CommandLine&version=4.0.0-beta0012"`
    to the first line of the `build.cake` file.
-2. Add some GitVersion to the `Default` build target:
+2. Add this right after the `var target` line:
    ```c#
    var gitVersion = GitVersion(new GitVersionSettings
    {
-     OutPutType = GitVersionOutput.Json
+       OutPutType = GitVersionOutput.Json
    });
-
+   ```
+3. Then add tis to `Task("Default")`:
+   ```c#:
    Information("NuGetVersion: {0}", gitVersion.NuGetVersion);
    Information("InformationalVersion: {0}", gitVersion.InformationalVersion);
    ```
-3. Execute `./build.sh` and notice the version numbers written to the
+4. Execute `./build.sh` and notice the version numbers written to the
    command line.
-4. Add and commit the changes to `build.cake` to Git.
+5. Add and commit the changes to `build.cake` to Git.
 
-### Having the Cake and eating it too
+### Serving the Cake
 
 Now, let's set put Cake to work in TeamCity.
 
@@ -139,18 +142,130 @@ Now, let's set put Cake to work in TeamCity.
       autocompleted this by TeamCity.
 6. Go to "General Settings", expand "Advanced options" and change the "Build
    number format" to `%env.GitVersion_NuGetVersion%`.
-7. Remove the code added in step 2 in the previous section and add this to
-   `cake.build` instead:
+7. Add a `Task("GitVersion")` and add the following code to it in `cake.build`:
    ```c#
    GitVersion(new GitVersionSettings
    {
-     OutPutType = GitVersionOutput.BuildServer
+       OutPutType = GitVersionOutput.BuildServer
    });
    ```
-8. Commit the change to Git and and push:
+8. Add `.IsDependentOn("GitVersion")` to `Task("Default")`.
+9. Commit the change to Git and and push:
    ```bash
    git commit -am 'Output GitVersion to build server instead of JSON'
    git push
    ```
-9. Go back to TeamCity and notice that it picks up the change, builds the
+10. Go back to TeamCity and notice that it picks up the change, builds the
    project and uses GitVersion's version number as its build number.
+
+### Wrestling the Octopus
+
+Now, let's set up Octopus Deploy.
+
+1. Open Octopus Deploy's web interface in a browser.
+2. Create two environments: `Staging` and `Production`.
+3. Create a new SSH Account
+   1. Username: `octopus`.
+   2. Password: `OpenSesame`.
+4. Create a new deployment target for `Staging`.
+   1.  Target Type: SSH Connection
+   2.  Click "Enter details manually"
+   3.  Display Name: Staging Server.
+   4.  Environments: Staging.
+   5.  Target Roles: Create new role called `Web`.
+   6.  Account: Choose the `SSH` account created earlier.
+   7.  Host: The IP address of your host machine where `docker-compose up`
+       was executed.
+   8.  Port: `2222`
+   9.  Fingerprint: If empty, log in to the `staging` container as such:
+       `ssh -o FingerprintHash=md5 octopus@localhost -p 2222`
+       The MD5 fingerprint will be printed to the console.
+   10. .NET Framework: Mono not installed (beta)
+5. Create a new deployment target for `Production`.
+   1.  Target Type: SSH Connection
+   2.  Click "Enter details manually"
+   3.  Display Name: Production Server.
+   4.  Environments: Production.
+   5.  Target Roles: Create new role called `Web`.
+   6.  Account: Choose the `SSH` account created earlier.
+   7.  Host: The IP address of your host machine where `docker-compose up`
+       was executed.
+   8.  Port: `2223`
+   9.  Fingerprint: If empty, log in to the `production` container as such:
+       `ssh -o FingerprintHash=md5 octopus@localhost -p 2223`
+       The MD5 fingerprint will be printed to the console.
+   10. .NET Framework: Mono not installed (beta)
+6. Create a new project
+  1. Name: Demo project
+7. Add step
+  1. Step template: Run Script
+  2. Step Name: Copy web
+  3. Execution Plan: Deployment targets
+    1. Runs on targets in roles: Web
+  4. Script Content: Bash
+     ```bash
+     cp index.html /usr/share/nginx/html
+     ```
+8. Click your profile picture in the top right corner
+   1. "Profile"
+   2. "My API Keys"
+   3. "New API Key"
+      1. Purpose: Deployments from TeamCity
+   4. Copy the API key.
+
+### Octopi Like Cake Too
+
+Now let's go back to the `build.cake` to instrument Octopus Deploy.
+
+1. Add `#tool "nuget:?package=OctopusTools"` as a second line to `build.cake`.
+2. Rename the existing `Task("Default")` to `Version`.
+3. Add the following `Tasks` to `build.cake`:
+   ```c#
+   Task("OctoPack")
+       .IsDependentOn("GitVersion")
+       .Does(() =>
+       {
+           OctoPack("Demo", new OctopusPackSettings
+           {
+               Include = new [] { "index.html" },
+               Version = gitVersion.NuGetVersion,
+               Overwrite = true
+           });
+       });
+
+   Task("OctoPush")
+       .IsDependentOn("OctoPack")
+       .Does(() =>
+       {
+           OctoPush("<the URL of your Octopus Deploy server>",
+                    "<paste in the key copied from Octopus Deploy>",
+                    new OctopusPushSettings
+                    {
+                        ReplaceExisting = true
+                    });
+       });
+
+   Task("OctoRelease")
+       .IsDependentOn("OctoPush")
+       .Does(() =>
+       {
+           OctoCreateRelease("Demo", new CreateReleaseSettings
+           {
+               Server = "<the URL of your Octopus Deploy server>",
+               ApiKey = "<paste in the key copied from Octopus Deploy>",
+               ReleaseNumber = gitVersion.NuGetVersion
+           });
+       });
+   
+   Task("TeamCity")
+       .IsDependentOn("OctoRelease");
+   ```
+4. Remember to replace the strings with `<text>` in them with valid values.
+5. Go over to TeamCity and add `--target=TeamCity` to the command parameters
+   to run the `TeamCity` task instead of the `Default` task.
+6. Commit the changes to `build.cake`, push them and notice how TeamCity now:
+   1. Builds the project.
+   2. Creates a NuGet package (`.nupkg`) with OctoPack.
+   3. Pushes the NuGet package to Octopus Deploy.
+   4. Creates a release in Octopus Deploy.
+   5. All with the same version number provided by GitVersion.
