@@ -1,13 +1,16 @@
 FROM nginx:alpine
+FROM frolvlad/alpine-mono
 
-RUN apk update
-RUN apk add openssh
-RUN mkdir /var/run/sshd
-RUN adduser -g "octopus" -D octopus && mkdir /home/octopus/.ssh
-RUN echo "octopus:OpenSesame" | chpasswd
-RUN chown -R octopus.octopus /home/octopus
-RUN chmod 700 /home/octopus/.ssh
-RUN ssh-keygen -A
+RUN apk update && \
+    apk add --no-cache openssh && \
+    apk add --no-cache bash
+
+RUN mkdir /var/run/sshd && \
+    adduser -g "octopus" -D octopus && mkdir /home/octopus/.ssh && \
+    echo "octopus:OpenSesame" | chpasswd && \
+    chown -R octopus.octopus /home/octopus && \
+    chmod 700 /home/octopus/.ssh && \
+    ssh-keygen -A
 
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
