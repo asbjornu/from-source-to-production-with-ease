@@ -48,9 +48,9 @@ and has aliased `gv` to `gitversion | pjson`. To install `pjson`, you need
 Python. When Python is installed, `pip install pjson` will install it on your
 `PATH`.
 
-### Exercises
+## Exercises
 
-#### Get Your Git Up
+### Get Your Git Up
 
 First we're going to do some initial setup of Git and TeamCity.
 
@@ -75,7 +75,7 @@ First we're going to do some initial setup of Git and TeamCity.
 11. Type `gv` at the command line and notice how the `BuildMetaData` is
     incremented.
 
-#### Building a Cake
+### Baking a Cake
 
 Next we're going to add Cake and a build script to our repository.
 
@@ -87,9 +87,70 @@ Next we're going to add Cake and a build script to our repository.
        `curl -Lsfo build.sh https://cakebuild.net/download/bootstrapper/osx`
 2. Make the build script executable: `chmod +x build.sh`
 3. Add the build script to Git: `git add build.sh`
-4. Commit: `git commit -m 'Added Cake build script'`
+4. Commit: `git commit -m 'Added Cake bootstrap script'`
 5. Add a `build.cake` file containing the example from Cake's tutorial
    chapter 2 ("Create a Cake Script").
 6. Execute the build script: `./build.sh`
 7. Notice how the "Hello World" message is printed on the command line.
+8. Add and commit the `build.cake` file to Git:
+   ```bash
+   git add build.cake
+   git commit -m 'Added Cake build script'
+   ```
 
+### Layering the Cake
+
+Now, let's add GitVersion to the repository.
+
+1. Add `#tool "nuget:?package=GitVersion.CommandLine&version=4.0.0-beta0012"`
+   to the first line of the `build.cake` file.
+2. Add some GitVersion to the `Default` build target:
+   ```c#
+   var gitVersion = GitVersion(new GitVersionSettings
+   {
+     OutPutType = GitVersionOutput.Json
+   });
+
+   Information("NuGetVersion: {0}", gitVersion.NuGetVersion);
+   Information("InformationalVersion: {0}", gitVersion.InformationalVersion);
+   ```
+3. Execute `./build.sh` and notice the version numbers written to the
+   command line.
+4. Add and commit the changes to `build.cake` to Git.
+
+### Having the Cake and eating it too
+
+Now, let's set put Cake to work in TeamCity.
+
+1. Open TeamCity's web interface and edit the settings of the build
+   configuration for the demo project we've created.
+2. Navigate to "Build Steps" and click "Add build step"
+   1. Step name: Build.
+   2. Expand advanced options.
+   3. Run: Executable with parameters
+   4. Command executable: `./build.sh`.
+4. Go to "Parameters" and click "Add new parameter".
+   1. Name: `env.GitVersion_NuGetVersion`.
+   2. Leave the Value empty.
+4. Click "Add new parameter" again.
+   1. Name: `env.Git_Branch`.
+   2. Value: `%teamcity.build.vcs.branch.<vcsid>%` where `<vcsid>` is the
+      ID of the VCS attached to the build configuration. You should get
+      autocompleted this by TeamCity.
+6. Go to "General Settings", expand "Advanced options" and change the "Build
+   number format" to `%env.GitVersion_NuGetVersion%`.
+7. Remove the code added in step 2 in the previous section and add this to
+   `cake.build` instead:
+   ```c#
+   GitVersion(new GitVersionSettings
+   {
+     OutPutType = GitVersionOutput.BuildServer
+   });
+   ```
+8. Commit the change to Git and and push:
+   ```bash
+   git commit -am 'Output GitVersion to build server instead of JSON'
+   git push
+   ```
+9. Go back to TeamCity and notice that it picks up the change, builds the
+   project and uses GitVersion's version number as its build number.
