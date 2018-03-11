@@ -11,6 +11,26 @@ services:
       - "80:80"
     restart: always
 
+  staging:
+    container_name: staging
+    build: ./docker/nginx-ssh
+    volumes:
+      - ~/Library/Servers/Staging:/usr/share/nginx/html
+    ports:
+      - "81:80"
+      - "2222:22"
+    restart: always
+
+  production:
+    container_name: production
+    build: ./docker/nginx-ssh
+    volumes:
+      - ~/Library/Servers/Production:/usr/share/nginx/html
+    ports:
+      - "82:80"
+      - "2223:22"
+    restart: always
+
   teamcity-server:
     container_name: "teamcity-server"
     image: "jetbrains/teamcity-server"
