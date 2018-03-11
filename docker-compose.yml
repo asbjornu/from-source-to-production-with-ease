@@ -24,7 +24,7 @@ services:
 
   teamcity-agent:
     container_name: "teamcity-agent"
-    build: .
+    build: ./docker/teamcity-agent-mono
     environment:
       - SERVER_URL=teamcity-server:8111
     volumes:
