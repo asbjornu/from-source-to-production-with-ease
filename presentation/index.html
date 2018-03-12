@@ -47,8 +47,8 @@
                     </aside>
                 </section>
 
-                <section id="pipeline"> 
-                    <svg version="1.1" id="pipeline-drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 600 340" style="enable-background:new 0 0 600 340;" xml:space="preserve">
+                <section id="pipeline">
+                    <svg version="1.1" id="pipeline-drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 600 340" xml:space="preserve" style="margin-top: -10%">
                         <g>
                             <g class="text">
                                 <path d="M158.9,167.9c0,3-0.9,5.3-2.6,6.9c-1.7,1.6-4.2,2.4-7.4,2.4h-5.2v-18.3h5.8c3,0,5.3,0.8,7,2.4 C158.1,162.9,158.9,165.1,158.9,167.9z M154.9,168c0-3.9-1.7-5.9-5.2-5.9h-2.1V174h1.7C153,174,154.9,172,154.9,168z"/>
@@ -148,17 +148,23 @@
                         </g>
                     </svg>
 
-                    <div class="fragment monitor"></div>
-                    <div class="fragment plan"></div>
-                    <div class="fragment create">
-                        <img src="images/git.svg" width="200" style="position: absolute; top: 10px; left: 10px">
-                    </div>
-                    <div class="fragment build">
-                        <img src="images/teamcity.svg" width="200" style="position: absolute; bottom: 10px; left: 10px">
-                    </div>
-                    <div class="fragment package release configure">
-                        <img src="images/octopus-deploy.svg" width="200" style="position: absolute; bottom: 100px; right: 450px">
-                    </div>
+                    <span class="fragment monitor"></span>
+                    <span class="fragment plan"></span>
+                    
+                    <div class="icons">
+                        <span class="fragment create">
+                            <img src="images/git.svg" width="200">
+                        </span>
+                        <span class="fragment gitversion">
+                            <img src="images/gitversion.svg" width="200">
+                        </span>
+                        <span class="fragment build">
+                            <img src="images/teamcity.svg" width="200">
+                        </span>
+                        <span class="fragment package release configure">
+                            <img src="images/octopus-deploy.svg" width="200">
+                        </span>
+                    </ol>
                 </section>
             </div>
         </div>

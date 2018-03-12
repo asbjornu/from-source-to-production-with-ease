@@ -59,3 +59,23 @@
     transition: opacity 1s;
     opacity: 1;
 }
+
+.icons {
+    position: absolute;
+    bottom: -25%;
+    width: 100%;
+    text-align: center;
+}
+
+.icons span {
+    display: inline-block;
+    margin: 0 100px;
+}
+
+.icons span:first-of-type {
+    margin-left: 0;
+}
+
+.icons span:last-of-type {
+    margin-right: 0;
+}
