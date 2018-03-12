@@ -65,11 +65,12 @@ First we're going to do some initial setup of Git and TeamCity.
 7.  Authorize the build agent in TeamCity by clicking "Agents" and
     "Unauthorized"
 8.  Create a new project from the repository `/usr/demo/remote` in TeamCity.
-9.  Edit the Version Control Settings for the attached VCS root and change
-    the "Changes Checking Interval" from 60 to 2 seconds (expand the
-    "advanced options" to reveal this setting).
-    (PS: This is done only for demo purposes. You want to keep this at 60s in
-    production)
+9.  Edit the Version Control Settings for the attached VCS root and change:
+    1. "Changes Checking Interval" from 60 to 1 seconds (expand the
+        "advanced options" to reveal this setting).
+        (PS: This is done only for demo purposes. You want to keep this at 60s in
+        production)
+    2. Branch specification: `+:refs/heads/*`
 9.  Change the `readme.md` file in `~/demo/local`, commit it and push.
 10. See that the change is picked up by TeamCity, triggering a build.
 11. Notice that TeamCity uses an integer build counter to number its builds.
@@ -197,16 +198,27 @@ Now, let's set up Octopus Deploy.
    10. .NET Framework: Mono not installed (beta)
 6. Create a new project
   1. Name: Demo project
-7. Add step
-  1. Step template: Run Script
-  2. Step Name: Copy web
+
+Next we're going to add some build steps according to
+[this raw scripting guide](https://octopus.com/docs/deploying-applications/custom-scripts/raw-scripting).
+
+1. Add step 
+  1. Step template: Transfer Package
+  2. Execution Plan: Deployment targets
+    1. Runs on targets in Roles: `Web`
+  3. Package feed: Octopus Server
+  4. Package ID: `Demo`
+  5. Transfer Path: `~/temp/uploads`
+2. Add another step
+  1. Step template: Run a Script
+  2. Step Name: Unpack
   3. Execution Plan: Deployment targets
-    1. Runs on targets in roles: Web
+    1. Runs on targets in roles: `Web`
   4. Script Content: Bash
      ```bash
      cp index.html /usr/share/nginx/html
      ```
-8. Click your profile picture in the top right corner
+3. Click your profile picture in the top right corner
    1. "Profile"
    2. "My API Keys"
    3. "New API Key"
@@ -269,3 +281,21 @@ Now let's go back to the `build.cake` to instrument Octopus Deploy.
    3. Pushes the NuGet package to Octopus Deploy.
    4. Creates a release in Octopus Deploy.
    5. All with the same version number provided by GitVersion.
+
+### Put GitVersion to Work
+
+Now, let's see how GitVersion reacts to changes in Git.
+
+1. First, go to Octopus Deploy and open the "Demo" project.
+2. Under "Variables" create a new variable named `Environment` with the values:
+   1. `production` for the environment scope `Production`
+   2. `staging` for the environment scope `Staging`
+3. Create the file `index.html` and add some basic HTML to it. Somewhere in the
+   file, add the text `#{Environment}` to test Octopus Deploy's variable
+   substitution functionality.
+4. Add and commit `index.html` to Git.
+5. Create a tag: `git tag 1.0`
+6. Push the tag: `git push --tags`
+7. Then push the commit: `git push`
+8. See how TeamCity now creates a build named `1.0`
+9. See how release version `1.0` is created in Octopus Deploy.
