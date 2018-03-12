@@ -1,5 +1,5 @@
-FROM nginx:alpine
-FROM frolvlad/alpine-mono
+FROM nginx:alpine as nginx
+FROM microsoft/dotnet-nightly:2.1-runtime-deps-alpine as dotnet
 
 RUN apk update && \
     apk add --no-cache openssh bash openssl
