@@ -2,8 +2,7 @@ FROM nginx:alpine
 FROM frolvlad/alpine-mono
 
 RUN apk update && \
-    apk add --no-cache openssh && \
-    apk add --no-cache bash
+    apk add --no-cache openssh bash openssl
 
 RUN mkdir /var/run/sshd && \
     adduser -g "octopus" -D octopus && mkdir /home/octopus/.ssh && \
