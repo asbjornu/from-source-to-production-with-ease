@@ -41,30 +41,32 @@ function Presentation() {
             return;
         }
 
+        var dimPartsExcept = function(visiblePart) {
+            var parts = document.getElementsByClassName('part');
+            for (var part of parts) {
+                if (part.className.baseVal.indexOf(visiblePart) > -1) {
+                    part.className.baseVal = 'part ' + visiblePart;
+                } else {
+                    part.className.baseVal += ' dim';
+                }
+            }
+        }
+
         switch (nav.fragment) {
             case 'monitor':
             case 'plan':
-                var el = document.getElementsByClassName(nav.fragment)[0];
-                el.className.baseVal += ' off';
-                break;
-
-            case 'create':
-                var els = document.getElementsByClassName('part');
-                for (var el of els) {
-                    if (el.className.baseVal.indexOf(nav.fragment) > -1) {
-                        continue;
-                    }
-
-                    el.className.baseVal += ' dim';
-                }
+                var part = document.getElementsByClassName(nav.fragment)[0];
+                part.className.baseVal += ' off';
                 break;
 
             case 'build':
-                var el = document.getElementsByClassName(nav.fragment)[0];
-                el.className.baseVal = el.className.baseVal.replace('dim', 'on');                                
+            case 'create':
+                dimPartsExcept(nav.fragment);
                 break;
 
             case 'package':
+                dimPartsExcept(nav.fragment);
+        
                 for (var f of nav.fragments) {
                     var el = document.getElementsByClassName(f)[0];
                     el.className.baseVal = el.className.baseVal.replace('dim', 'on');                                
