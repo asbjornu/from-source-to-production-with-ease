@@ -312,22 +312,35 @@ Now, let's see how GitVersion reacts to changes in Git.
 
 ### Deploy It!
 
-Now, let's auto-deploy all stable releases to the `Staging` environment. Add
-the following to the `build.cake` file:
+Now, let's auto-deploy all stable releases to the `Staging` environment.
 
-```c#
-Task("OctoDeploy")
-    .IsDependentOn("OctoRelease")
-    .WithCriteria(gitVersion.PreReleaseTag == String.Empty)
-    .Does(() =>
-    {
-        OctoDeployRelease("http://octopus-deploy.example",
-                        "API-XXXXXXXXXXXXXXXXXXXX",
-                        "Demo",
-                        "Staging",
-                        gitVersion.NuGetVersion,
-                        new OctopusDeployReleaseDeploymentSettings());
-    });
-```
-
-Then change `IsDependentOn("OctoRelease")` for `Task("TeamCity")` to `OctoDeploy`.
+1. Add the following to the `build.cake` file:
+   ```c#
+   Task("OctoDeploy")
+       .IsDependentOn("OctoRelease")
+       .WithCriteria(gitVersion.PreReleaseTag == String.Empty)
+       .Does(() =>
+       {
+           OctoDeployRelease("http://octopus-deploy.example",
+                           "API-XXXXXXXXXXXXXXXXXXXX",
+                           "Demo",
+                           "Staging",
+                           gitVersion.NuGetVersion,
+                           new OctopusDeployReleaseDeploymentSettings());
+       });
+   ```
+2. Then change `IsDependentOn("OctoRelease")` for `Task("TeamCity")` to
+   `OctoDeploy`.
+3. Commit and push the change.
+4. Notice how the `OctoDeploy` task is skipped because we require the
+   `PreReleaseTag` to be empty, which it will only be on stable builds.
+5. Merge `develop` to `master`, tag it and push:
+   ```git
+   git checkout master
+   git merge --no-ff --no-edit develop
+   git tag 1.1
+   git push --tags
+   git push
+   ```
+6. TeamCity should now run the `OctoDeploy` step, automatically deploying
+   our HTML file to the `Staging` environment.
