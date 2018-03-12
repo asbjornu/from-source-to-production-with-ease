@@ -9,6 +9,11 @@
     margin: 0;
 }
 
+#pipeline-drawing .part {
+    transition: opacity 1s;
+    opacity: 1;
+}
+
 #pipeline-drawing .plan {
     fill: #19838E;
 }
@@ -34,9 +39,7 @@
 }
 
 #pipeline-drawing .monitor {
-    transition: opacity 1s;
     fill: #AA2E2E;
-    opacity: 1;
 }
 
 #pipeline-drawing .text {
