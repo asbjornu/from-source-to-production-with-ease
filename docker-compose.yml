@@ -6,7 +6,7 @@ services:
     image: nginx:alpine
     container_name: presentation-nginx
     volumes:
-      - ./docs:/usr/share/nginx/html
+      - ./presentation:/usr/share/nginx/html
     ports:
       - "80:80"
     restart: always
