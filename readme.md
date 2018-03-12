@@ -113,7 +113,7 @@ Now, let's add GitVersion to the repository.
        OutPutType = GitVersionOutput.Json
    });
    ```
-3. Then add tis to `Task("Default")`:
+3. Then add this to `Task("Default")`:
    ```c#:
    Information("NuGetVersion: {0}", gitVersion.NuGetVersion);
    Information("InformationalVersion: {0}", gitVersion.InformationalVersion);
@@ -161,41 +161,17 @@ Now, let's set put Cake to work in TeamCity.
 
 ### Wrestling the Octopus
 
-Now, let's set up Octopus Deploy.
+Now, let's set up Octopus Deploy. To continue, please
+[install Octopus Deploy](https://octopus.com/docs/installation) and two
+[listening Tentacles](https://octopus.com/docs/infrastructure/windows-targets/listening-tentacles).
+
+Call one Tentacle `Staging` and the other `Production`. Ensure that they
+have different names as well as different home and application folders (i.e.
+`C:\Octopus\Tentacles\Staging` and `C:\Octopus\Tentacles\Production`).
 
 1. Open Octopus Deploy's web interface in a browser.
 2. Create two environments: `Staging` and `Production`.
-3. Create a new SSH Account
-   1. Username: `octopus`.
-   2. Password: `OpenSesame`.
-4. Create a new deployment target for `Staging`.
-   1.  Target Type: SSH Connection
-   2.  Click "Enter details manually"
-   3.  Display Name: Staging Server.
-   4.  Environments: Staging.
-   5.  Target Roles: Create new role called `Web`.
-   6.  Account: Choose the `SSH` account created earlier.
-   7.  Host: The IP address of your host machine where `docker-compose up`
-       was executed.
-   8.  Port: `2222`
-   9.  Fingerprint: If empty, log in to the `staging` container as such:
-       `ssh -o FingerprintHash=md5 octopus@localhost -p 2222`
-       The MD5 fingerprint will be printed to the console.
-   10. .NET Framework: Mono not installed (beta)
-5. Create a new deployment target for `Production`.
-   1.  Target Type: SSH Connection
-   2.  Click "Enter details manually"
-   3.  Display Name: Production Server.
-   4.  Environments: Production.
-   5.  Target Roles: Create new role called `Web`.
-   6.  Account: Choose the `SSH` account created earlier.
-   7.  Host: The IP address of your host machine where `docker-compose up`
-       was executed.
-   8.  Port: `2223`
-   9.  Fingerprint: If empty, log in to the `production` container as such:
-       `ssh -o FingerprintHash=md5 octopus@localhost -p 2223`
-       The MD5 fingerprint will be printed to the console.
-   10. .NET Framework: Mono not installed (beta)
+3. Add the two listening tentacles as Deployment Targets.
 6. Create a new project
   1. Name: Demo project
 
@@ -203,27 +179,32 @@ Next we're going to add some build steps according to
 [this raw scripting guide](https://octopus.com/docs/deploying-applications/custom-scripts/raw-scripting).
 
 1. Add step 
-  1. Step template: Transfer Package
+  1. Step template: IIS
   2. Execution Plan: Deployment targets
     1. Runs on targets in Roles: `Web`
   3. Package feed: Octopus Server
   4. Package ID: `Demo`
-  5. Transfer Path: `~/temp/uploads`
-2. Add another step
-  1. Step template: Run a Script
-  2. Step Name: Unpack
-  3. Execution Plan: Deployment targets
-    1. Runs on targets in roles: `Web`
-  4. Script Content: Bash
-     ```bash
-     cp index.html /usr/share/nginx/html
-     ```
-3. Click your profile picture in the top right corner
+  5. Web Site: `#{Environment}`
+  6. Application Pool: `#{Environment}`
+  7. Bindings
+    1. Protocol: `http`
+    2. Port: `#{Port}`
+    3. Host: `#{Environment}`
+  8. IIS Authentication: `Anonymous`
+  9. Add feature: Substitute Variables in Files
+    1. Target files: `*.html`
+2. Click your profile picture in the top right corner
    1. "Profile"
    2. "My API Keys"
    3. "New API Key"
       1. Purpose: Deployments from TeamCity
    4. Copy the API key.
+3. Click Variables and create a new variable called `Environment`
+   1. Value `staging` for scope `Staging`
+   2. Value `production` for scope `Production`
+4. Create another variable called `Port`
+   1. Value `81` for scope `Staging`
+   2. Value `82` for scope `Production`
 
 ### Octopi Like Cake Too
 
