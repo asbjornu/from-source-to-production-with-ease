@@ -286,16 +286,48 @@ Now let's go back to the `build.cake` to instrument Octopus Deploy.
 
 Now, let's see how GitVersion reacts to changes in Git.
 
-1. First, go to Octopus Deploy and open the "Demo" project.
-2. Under "Variables" create a new variable named `Environment` with the values:
-   1. `production` for the environment scope `Production`
-   2. `staging` for the environment scope `Staging`
-3. Create the file `index.html` and add some basic HTML to it. Somewhere in the
-   file, add the text `#{Environment}` to test Octopus Deploy's variable
-   substitution functionality.
-4. Add and commit `index.html` to Git.
-5. Create a tag: `git tag 1.0`
-6. Push the tag: `git push --tags`
-7. Then push the commit: `git push`
-8. See how TeamCity now creates a build named `1.0`
-9. See how release version `1.0` is created in Octopus Deploy.
+1.  First, go to Octopus Deploy and open the "Demo" project.
+2.  Under "Variables" create a new variable named `Environment` with the values:
+    1. `production` for the environment scope `Production`
+    2. `staging` for the environment scope `Staging`
+3.  Create the file `index.html` and add some basic HTML to it. Somewhere in the
+    file, add the text `#{Environment}` to test Octopus Deploy's variable
+    substitution functionality.
+4.  Add and commit `index.html` to Git.
+5.  Create a tag: `git tag 1.0`
+6.  Push the tag: `git push --tags`
+7.  Then push the commit: `git push`
+8.  See how TeamCity now creates a build named `1.0`
+9.  See how release version `1.0` is created in Octopus Deploy.
+10. Create a `develop` branch so we can iterate a bit without having to
+    create tags for everything we want published:
+    ```git
+    git checkout -b develop
+    git push --set-upstream origin develop
+    ```
+11. Make a change to the `index.html` file, commit and push it on the `develop`
+    branch.
+12. Notice how the version number in TeamCity is set to `1.1.0-alpha.X` where
+    `X` is the number of commits since the last tag on `master`.
+
+### Deploy It!
+
+Now, let's auto-deploy all stable releases to the `Staging` environment. Add
+the following to the `build.cake` file:
+
+```c#
+Task("OctoDeploy")
+    .IsDependentOn("OctoRelease")
+    .WithCriteria(gitVersion.PreReleaseTag == String.Empty)
+    .Does(() =>
+    {
+        OctoDeployRelease("http://octopus-deploy.example",
+                        "API-XXXXXXXXXXXXXXXXXXXX",
+                        "Demo",
+                        "Staging",
+                        gitVersion.NuGetVersion,
+                        new OctopusDeployReleaseDeploymentSettings());
+    });
+```
+
+Then change `IsDependentOn("OctoRelease")` for `Task("TeamCity")` to `OctoDeploy`.
