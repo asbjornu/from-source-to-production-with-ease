@@ -1,20 +1,28 @@
 function Presentation() {
     var previousStep = -1;
+    var knownFragments = ['plan', 'create', 'verify', 'package', 'release', 'configure', 'monitor'];
 
-    var getNavigation = function() {
+    var getNavigation = function(event) {
+        var currentSlide = Reveal.getCurrentSlide();
+
         var nav = {
-            id: Reveal.getCurrentSlide().id,
+            id: currentSlide.id,
             step: Reveal.getIndices().f,
         };
-    
+
+        if (event.fragment && event.fragment.className) {
+            var fragments = event.fragment.className.split(' ');
+            nav.fragment = fragments.filter(f => knownFragments.indexOf(f.trim()) > -1)[0];            
+        }
+
         nav.forward = nav.step >= previousStep;
         nav.backward = nav.step < previousStep;
 
         return nav;
     }
 
-    this.slideChanged = function() {
-        var nav = getNavigation();
+    this.slideChanged = function(event) {
+        var nav = getNavigation(event);
 
         if (nav.id != 'pipeline') {
             return;
@@ -23,23 +31,30 @@ function Presentation() {
         console.log('slideChanged', nav);
     };
 
-    this.fragmentShown = function() {
-        var nav = getNavigation();
+    this.fragmentShown = function(event) {
+        var nav = getNavigation(event);
 
         console.log('fragmentShown', nav);
 
-        if (nav.id != 'pipeline') {
+        if (nav.id != 'pipeline' ||!event.fragment || !event.fragment.className) {
             return;
         }
 
-        var monitor = document.getElementsByClassName('monitor')[0];
-        var monitorText = document.getElementsByClassName('monitor-text')[0];
-        monitor.className.baseVal = 'monitor-dim';
-        monitorText.className.baseVal = 'text-dim';
+        switch (nav.fragment) {
+            case 'monitor':
+            case 'plan':
+                var el = document.getElementsByClassName(nav.fragment)[0];
+                el.className.baseVal += ' dim';
+                break;
+
+            case 'create':
+
+                break;
+        }
     };
 
-    this.fragmentHidden = function() {        
-        var nav = getNavigation();
+    this.fragmentHidden = function(event) {        
+        var nav = getNavigation(event);
 
         console.log('fragmentHidden', nav);
 
