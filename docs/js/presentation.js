@@ -1,6 +1,6 @@
 function Presentation() {
     var previousStep = -1;
-    var knownFragments = ['plan', 'create', 'verify', 'package', 'release', 'configure', 'monitor'];
+    var knownFragments = ['plan', 'create', 'build', 'package', 'release', 'configure', 'monitor'];
 
     var getNavigation = function(event) {
         var currentSlide = Reveal.getCurrentSlide();
@@ -56,6 +56,11 @@ function Presentation() {
 
                     el.className.baseVal += ' dim';
                 }
+                break;
+
+            case 'build':
+                var el = document.getElementsByClassName(nav.fragment)[0];
+                el.className.baseVal = el.className.baseVal.replace('dim', 'on');                                
                 break;
         }
     };

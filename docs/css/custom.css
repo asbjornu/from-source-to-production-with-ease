@@ -54,3 +54,8 @@
     transition: opacity 1s;
     opacity: 0;
 }
+
+#pipeline-drawing .on {
+    transition: opacity 1s;
+    opacity: 1;
+}
