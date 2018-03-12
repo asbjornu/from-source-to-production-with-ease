@@ -13,16 +13,12 @@
     fill: #19838E;
 }
 
-#pipeline-drawing .verify {
-    fill: #3737AA;
-}
-
 #pipeline-drawing .create {
     fill: #8B9B29;
 }
 
-#pipeline-drawing .st4 {
-    fill: none;
+#pipeline-drawing .build {
+    fill: #3737AA;
 }
 
 #pipeline-drawing .package {
