@@ -13,7 +13,7 @@ services:
 
   staging:
     container_name: staging
-    build: ./docker/nginx-ssh
+    build: ./docker/nginx-ssh-dotnet
     volumes:
       - ~/Library/Servers/staging/html:/usr/share/nginx/html
       - ~/Library/Servers/staging/octopus:/home/octopus
@@ -24,7 +24,7 @@ services:
 
   production:
     container_name: production
-    build: ./docker/nginx-ssh
+    build: ./docker/nginx-ssh-dotnet
     volumes:
       - ~/Library/Servers/production/html:/usr/share/nginx/html
       - ~/Library/Servers/production/octopus:/home/octopus
