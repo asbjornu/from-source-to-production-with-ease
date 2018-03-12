@@ -15,7 +15,8 @@ services:
     container_name: staging
     build: ./docker/nginx-ssh
     volumes:
-      - ~/Library/Servers/Staging:/usr/share/nginx/html
+      - ~/Library/Servers/staging/html:/usr/share/nginx/html
+      - ~/Library/Servers/staging/octopus:/home/octopus
     ports:
       - "81:80"
       - "2222:22"
@@ -25,7 +26,8 @@ services:
     container_name: production
     build: ./docker/nginx-ssh
     volumes:
-      - ~/Library/Servers/Production:/usr/share/nginx/html
+      - ~/Library/Servers/production/html:/usr/share/nginx/html
+      - ~/Library/Servers/production/octopus:/home/octopus
     ports:
       - "82:80"
       - "2223:22"
