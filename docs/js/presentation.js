@@ -44,11 +44,18 @@ function Presentation() {
             case 'monitor':
             case 'plan':
                 var el = document.getElementsByClassName(nav.fragment)[0];
-                el.className.baseVal += ' dim';
+                el.className.baseVal += ' off';
                 break;
 
             case 'create':
+                var els = document.getElementsByClassName('part');
+                for (var el of els) {
+                    if (el.className.baseVal.indexOf(nav.fragment) > -1) {
+                        continue;
+                    }
 
+                    el.className.baseVal += ' dim';
+                }
                 break;
         }
     };
