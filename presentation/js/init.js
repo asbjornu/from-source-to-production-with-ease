@@ -3,7 +3,7 @@ Reveal.initialize({
     height: 1080,
     margin: 0.1,
     controls: false,
-    center: false,
+    center: true,
     dependencies: [
         {
             src: './node_modules/reveal.js/plugin/notes/notes.js',
