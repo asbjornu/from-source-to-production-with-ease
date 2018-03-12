@@ -11,8 +11,9 @@ function Presentation() {
         };
 
         if (event.fragment && event.fragment.className) {
-            var fragments = event.fragment.className.split(' ');
-            nav.fragment = fragments.filter(f => knownFragments.indexOf(f.trim()) > -1)[0];            
+            var classNames = event.fragment.className.split(' ');
+            nav.fragments = classNames.filter(f => knownFragments.indexOf(f.trim()) > -1);
+            nav.fragment = nav.fragments[0];
         }
 
         nav.forward = nav.step >= previousStep;
@@ -61,6 +62,13 @@ function Presentation() {
             case 'build':
                 var el = document.getElementsByClassName(nav.fragment)[0];
                 el.className.baseVal = el.className.baseVal.replace('dim', 'on');                                
+                break;
+
+            case 'package':
+                for (var f of nav.fragments) {
+                    var el = document.getElementsByClassName(f)[0];
+                    el.className.baseVal = el.className.baseVal.replace('dim', 'on');                                
+                }
                 break;
         }
     };
