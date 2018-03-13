@@ -6,7 +6,17 @@ var gitVersion = GitVersion(new GitVersionSettings
     OutputType = GitVersionOutput.Json
 });
 
+Task("GitVersion")
+    .Does(() => {
+        GitVersion(new GitVersionSettings
+        {
+            OutputType = GitVersionOutput.BuildServer
+        });
+    });
+
+
 Task("Default")
+    .IsDependentOn("GitVersion")
     .Does(() =>
     {
         Information("Hello Vilnius");
