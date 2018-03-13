@@ -44,8 +44,20 @@ Task("OctoPush")
                  });
     });
 
+Task("OctoRelease")
+    .IsDependentOn("OctoPush")
+    .Does(() =>
+    {
+        OctoCreateRelease("Demo", new CreateReleaseSettings
+        {
+            Server = octopusServer,
+            ApiKey = octopusApiKey,
+            ReleaseNumber = gitVersion.NuGetVersion
+        });
+    });
+
 Task("TeamCity")
-    .IsDependentOn("OctoPush");
+    .IsDependentOn("OctoRelease");
 
 Task("Default")
     .IsDependentOn("OctoPack")
