@@ -10,7 +10,7 @@ function Presentation() {
             step: Reveal.getIndices().f,
         };
 
-        if (event.fragment && event.fragment.className) {
+        if (event.fragment && typeof event.fragment.className === "string") {
             var classNames = event.fragment.className.split(' ');
             nav.fragments = classNames.filter(f => knownFragments.indexOf(f.trim()) > -1);
             nav.fragment = nav.fragments[0];
@@ -28,14 +28,10 @@ function Presentation() {
         if (nav.id != 'pipeline') {
             return;
         }
-
-        console.log('slideChanged', nav);
     };
 
     this.fragmentShown = function(event) {
         var nav = getNavigation(event);
-
-        console.log('fragmentShown', nav);
 
         if (nav.id != 'pipeline' ||!event.fragment || !event.fragment.className) {
             return;
@@ -77,8 +73,6 @@ function Presentation() {
 
     this.fragmentHidden = function(event) {        
         var nav = getNavigation(event);
-
-        console.log('fragmentHidden', nav);
 
         if (nav.id != 'pipeline') {
             return;
