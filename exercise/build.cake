@@ -2,6 +2,8 @@
 #tool "nuget:?package=OctopusTools"
 
 var target = Argument("Target", "Default");
+var octopusServer = "http://10.37.129.4/";
+var octopusApiKey = "API-OEYO3MAELSOXQV1EURKB5A787B0";
 var gitVersion = GitVersion(new GitVersionSettings
 {
     OutputType = GitVersionOutput.Json
@@ -26,6 +28,24 @@ Task("OctoPack")
             Overwrite = true
         });
     });
+
+Task("OctoPush")
+    .IsDependentOn("OctoPack")
+    .Does(() =>
+    {
+        var packageFiles = GetFiles("./*.nupkg");
+
+        OctoPush(octopusServer,
+                 octopusApiKey,
+                 packageFiles,
+                 new OctopusPushSettings
+                 {
+                     ReplaceExisting = true
+                 });
+    });
+
+Task("TeamCity")
+    .IsDependentOn("OctoPush");
 
 Task("Default")
     .IsDependentOn("OctoPack")
