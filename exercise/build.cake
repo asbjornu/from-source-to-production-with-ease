@@ -56,8 +56,21 @@ Task("OctoRelease")
         });
     });
 
+Task("OctoDeploy")
+    .IsDependentOn("OctoRelease")
+    .WithCriteria(gitVersion.PreReleaseTag == String.Empty)
+    .Does(() =>
+    {
+        OctoDeployRelease(octopusServer,
+                          octopusApiKey,
+                          "Demo",
+                          "Staging",
+                          gitVersion.NuGetVersion,
+                          new OctopusDeployReleaseDeploymentSettings());
+    }); 
+
 Task("TeamCity")
-    .IsDependentOn("OctoRelease");
+    .IsDependentOn("OctoDeploy");
 
 Task("Default")
     .IsDependentOn("OctoPack")
