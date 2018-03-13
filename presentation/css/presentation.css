@@ -9,6 +9,19 @@
     margin: 0;
 }
 
+.reveal ol {
+    list-style-type: none;
+}
+
+.reveal table .r {
+    text-align: right;
+    width: 100px;
+}
+
+.reveal table td {
+    vertical-align: middle;
+}
+
 #pipeline-drawing .part {
     transition: opacity 1s;
     opacity: 1;
