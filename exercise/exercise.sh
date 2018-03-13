@@ -1,5 +1,17 @@
 #!/bin/sh
 
+if [ $1 == "0" ]; then
+  rm -rf ~/demo/remote/.git
+  rm -rf ~/demo/remote/*
+  rm -rf ~/demo/local/.git
+  rm -rf ~/demo/local/*
+  cd ~/demo/remote
+  git init --bare
+  cd ~/demo/local
+  git clone ~/demo/remote ~/demo/local
+  exit 0;
+fi
+
 cwd=$(pwd)
 tag="exercise-$1"
 
