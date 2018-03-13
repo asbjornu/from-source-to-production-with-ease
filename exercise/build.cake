@@ -1,4 +1,5 @@
 #tool "nuget:?package=GitVersion.CommandLine&version=4.0.0-beta0012"
+#tool "nuget:?package=OctopusTools"
 
 var target = Argument("Target", "Default");
 var gitVersion = GitVersion(new GitVersionSettings
@@ -14,9 +15,20 @@ Task("GitVersion")
         });
     });
 
+Task("OctoPack")
+    .IsDependentOn("GitVersion")
+    .Does(() =>
+    {
+        OctoPack("Demo", new OctopusPackSettings
+        {
+            Include = new [] { "index.html" },
+            Version = gitVersion.NuGetVersion,
+            Overwrite = true
+        });
+    });
 
 Task("Default")
-    .IsDependentOn("GitVersion")
+    .IsDependentOn("OctoPack")
     .Does(() =>
     {
         Information("Hello Vilnius");
