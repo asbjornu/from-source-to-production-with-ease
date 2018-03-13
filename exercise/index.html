@@ -1,9 +1,32 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Hello Vilnius</title>
+        <title>#{Environment}</title>
+        <style>
+
+            body {
+                font-family: Helvetica, Sans-Serif;
+                text-align: center;
+                font-size: 4em;
+                padding-top: 10%;
+                color: #fff;
+            }
+
+            .production {
+                background-color: #600;
+            }
+
+            .staging {
+                background-color: #060;
+            }
+
+        </style>
     </head>
-    <body>
+    <body class="#{Environment}">
         <h1>Hello Vilnius!</h1>
+        <p>
+            This is version <code>#{Octopus.Release.Number}</code>
+            running on the <strong>#{Environment}</strong> environment.
+        </p>
     </body>
 </html>
