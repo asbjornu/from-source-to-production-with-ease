@@ -17,6 +17,30 @@ be Unix style and pretty much nothing of this will work verbatim in Windows.
 If there's demand for writing a Windows version of this,
 [please submit an issue](https://github.com/asbjornu/from-source-to-production-with-ease/issues).
 
+### Basics
+
+After cloning this respository and having set up and installed all requirements
+described below in this readme file, you should be able to do the following:
+
+```shell
+cd presentation
+npm install
+npm start
+```
+
+This should start the presentation, TeamCity and a build agent as local Docker
+containers on your local machine. Visiting `http://localhost/` in your browser
+should show the presentation.
+
+To export the presentation as a PDF file called
+`from-source-to-production-with-ease.pdf`, you can do the following:
+
+```shell
+cd presentation # Unless you did this in the previous step already
+npm install     # Unless you did this in the previous step already
+npm run export
+```
+
 ### Requirements
 
 - [TeamCity](https://www.jetbrains.com/teamcity/) (will be installed and
