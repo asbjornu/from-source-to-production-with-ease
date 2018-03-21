@@ -12,7 +12,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "docker-compose --file ../docker-compose.yml up -d && echo '' && echo 'All services started. The presentation should now be hosted at http://localhost/'",
+    "export": "`npm bin`/decktape index.html from-source-to-production-with-ease.pdf"
   },
   "repository": {
     "type": "git",
