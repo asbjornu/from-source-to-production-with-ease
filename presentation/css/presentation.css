@@ -22,6 +22,11 @@
     vertical-align: middle;
 }
 
+#pipeline-drawing {
+    height: 800px;
+    margin-bottom: 100px;
+}
+
 #pipeline-drawing .part {
     transition: opacity 1s;
     opacity: 1;
@@ -92,4 +97,8 @@
 
 .icons span:last-of-type {
     margin-right: 0;
+}
+
+#payex-logo {
+    margin-top: 100px;
 }
