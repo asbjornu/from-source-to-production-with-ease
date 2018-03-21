@@ -1,1 +1,3 @@
 .vagrant
+presentation/node_modules
+*.pdf
