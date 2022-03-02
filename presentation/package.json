@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "decktape": "^2.8.0",
-    "reveal.js": "^3.6.0"
+    "reveal.js": "^4.3.0"
   },
   "devDependencies": {},
   "scripts": {
