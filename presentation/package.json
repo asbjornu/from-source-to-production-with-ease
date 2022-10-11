@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "dependencies": {
-    "decktape": "^2.8.0",
+    "decktape": "^3.4.1",
     "reveal.js": "^3.6.0"
   },
   "devDependencies": {},
